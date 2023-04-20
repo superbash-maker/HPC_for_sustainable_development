@@ -12,6 +12,6 @@ export MPI_RUN=/apps/chpc/chem/openmpi/4.1.5/bin/mpirun
 rm -r build
 mkdir build
 cd build
-cmake .. -DGMX_BUILD_OWN_FFTW=ON -DREGRESSIONTEST_DOWNLOAD=ON -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_INSTALL_PREFIX=/mnt/lustre/users/krishna/gmx_cpu
+cmake .. -DGMX_BUILD_OWN_FFTW=ON -DREGRESSIONTEST_DOWNLOAD=ON -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DGMX_MPI=on -DCMAKE_INSTALL_PREFIX=/mnt/lustre/users/krishna/gmx_cpu
 make 
 make install
