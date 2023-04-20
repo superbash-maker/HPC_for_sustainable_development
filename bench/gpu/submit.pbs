@@ -1,0 +1,27 @@
+#!/bin/bash
+#PBS -P CHEM0792
+#PBS -N test
+#PBS -l select=1:ncpus=10:ngpus=1
+#PBS -l walltime=1:00:00
+#PBS -q gpu_1
+#PBS -m abe
+#PBS -M none
+#PBS -o output
+#PBS -e error
+
+module purge
+module load gcc/9.2.0
+module load chpc/cmake/3.26.3/gcc-9.2.0
+module load chpc/python/anaconda/3-2021.11  
+module load chpc/gpu/cuda/12.0/12.0
+
+ulimit -s unlimited
+OMP_NUM_THREADS=10
+ARGS="mdrun -gpu_id 0 -ntomp ${OMP_NUM_THREADS} -deffnm"
+EXE=/mnt/lustre/users/krishna/gmx_gpu/bin/gmx
+
+pushd /mnt/lustre/users/krishna/bench/cpu/adh_cubic
+rm md*
+${EXE} grompp -f pme_verlet.mdp -c conf.gro -p topol.top -o md_0_1.tpr
+${EXE} $ARGS md_0_1
+popd

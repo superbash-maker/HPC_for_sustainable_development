@@ -1,0 +1,32 @@
+#!/bin/bash
+#PBS -P CHEM0792
+#PBS -N test
+#PBS -l select=1:ncpus=24:mpiprocs=24
+#PBS -l walltime=1:00:00
+#PBS -q smp
+#PBS -m abe
+#PBS -M none
+#PBS -o output
+#PBS -e error
+
+module purge
+module load gcc/9.2.0
+module load chpc/cmake/3.26.3/gcc-9.2.0
+module load chpc/python/anaconda/3-2021.11  
+
+export PATH=/apps/chpc/chem/openmpi/4.1.5:$PATH
+export LD_LIBRARY_PATH=/apps/chpc/chem/openmpi/4.1.5/lib:$LD_LIBRARY_PATH
+export MPI_HOME=/apps/chpc/chem/openmpi/4.1.5
+export MPI_RUN=/apps/chpc/chem/openmpi/4.1.5/bin/mpirun
+
+ulimit -s unlimited
+CORES=24
+OMP_NUM_THREADS=1
+ARGS="mdrun -ntomp ${OMP_NUM_THREADS} -deffnm"
+EXE=/mnt/lustre/users/krishna/gmx_cpu/bin/gmx
+
+pushd /mnt/lustre/users/krishna/bench/cpu/adh_cubic
+rm md*
+${EXE} grompp -f pme_verlet.mdp -c conf.gro -p topol.top -o md_0_1.tpr
+mpirun -np $CORES -machinefile ${PBS_NODEFILE} ${EXE} $ARGS md_0_1
+popd
